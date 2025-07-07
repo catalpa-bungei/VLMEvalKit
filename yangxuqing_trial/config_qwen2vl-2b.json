@@ -1,0 +1,19 @@
+{
+    "model": {
+        "Qwen2-VL-2B-Instruct": {
+            "class": "Qwen2VLChat",
+            "model": "Qwen2-VL-2B-Instruct",
+            "model_path": "/root/.cache/huggingface/hub/models--Qwen--Qwen2-VL-2B-Instruct/snapshots/895c3a49bc3fa70a340399125c650a463535e71c",
+            "temperature": 0.7,
+            "use_custom_prompt": false,
+            "use_vllm": true
+        }
+    },
+    "data": {
+        "VL-RewardBench": {
+            "class": "VLRewardBench",
+            "dataset": "VL-RewardBench",
+            "test_range": -1
+        }
+    }
+}
