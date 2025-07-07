@@ -69,9 +69,11 @@ def infer_data_api(model, work_dir, model_name, dataset, index_set=None, api_npr
     gen_func = model.generate
     structs = [dict(message=struct, dataset=dataset_name) for struct in structs]
 
+    print("This is inference.py infer_data_api, before track_process_rich--------------------")
     if len(structs):
         track_progress_rich(gen_func, structs, nproc=api_nproc, chunksize=api_nproc, save=out_file, keys=indices)
 
+    print("This is inference.py infer_data_api, out_file:", out_file)
     res = load(out_file)
     if index_set is not None:
         res = {k: v for k, v in res.items() if k in index_set}
@@ -166,6 +168,7 @@ def infer_data(model, model_name, work_dir, dataset, out_file, verbose=False, ap
             response = model.generate(message=struct, dataset=dataset_name)
         torch.cuda.empty_cache()
 
+        print("This is inference.py infer_data, verbose:", verbose)
         if verbose:
             print(response, flush=True)
 
@@ -190,6 +193,7 @@ def infer_data_job(
     if osp.exists(result_file):
         if rank == 0:
             data = load(result_file)
+            print(f'Load previous results from {result_file}')
             results = {k: v for k, v in zip(data['index'], data['prediction'])}
             if not ignore_failed:
                 results = {k: v for k, v in results.items() if FAIL_MSG not in str(v)}

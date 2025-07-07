@@ -210,8 +210,8 @@ class BaseAPI:
             if self.system_prompt is None:
                 self.system_prompt = system_prompt
             else:
-                if system_prompt not in self.system_prompt:
-                    self.system_prompt += '\n' + system_prompt
+                self.system_prompt += '\n' + system_prompt
+
         return new_message
 
     def generate(self, message, **kwargs1):
@@ -245,6 +245,7 @@ class BaseAPI:
             try:
                 ret_code, answer, log = self.generate_inner(message, **kwargs)
                 if ret_code == 0 and self.fail_msg not in answer and answer != '':
+                    print("This is base.py generate, verbose: ", self.verbose)
                     if self.verbose:
                         print(answer)
                     return answer
@@ -288,9 +289,3 @@ class BaseAPI:
             else:
                 image = [x['value'] for x in message if x['type'] == 'image'][0]
         return prompt, image
-
-    def dump_image(self, line, dataset):
-        return self.dump_image_func(line)
-
-    def set_dump_image(self, dump_image_func):
-        self.dump_image_func = dump_image_func

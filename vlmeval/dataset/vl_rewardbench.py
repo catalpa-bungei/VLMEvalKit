@@ -74,7 +74,8 @@ class VLRewardBench(ImageBaseDataset):
     DATASET_URL = {
         'VL-RewardBench': 'https://huggingface.co/datasets/MMInstruction/VL-RewardBench/resolve/main/vl_rewardbench.tsv'
     }
-    DATASET_MD5 = {'VL-RewardBench': '1d2676f4ab4a5f755019ec0af2b28189'}
+    # DATASET_MD5 = {'VL-RewardBench': '1d2676f4ab4a5f755019ec0af2b28189'}
+    DATASET_MD5 = {'VL-RewardBench': '4849259836bc143c43e8b77b9c84b398'}
 
     # Given one data record, return the built prompt (a multi-modal message), can override
     def build_prompt(self, line):
@@ -102,6 +103,7 @@ class VLRewardBench(ImageBaseDataset):
     # It returns a DataFrame
     @classmethod
     def evaluate(self, eval_file, **judge_kwargs):
+        print("This is vl_rewardbench.py evaluate, judge_kwargs:", judge_kwargs)
         suffix = eval_file.split('.')[-1]
         model = judge_kwargs['model']
         storage = eval_file.replace(f'.{suffix}', f'_{model}.xlsx')
@@ -110,8 +112,10 @@ class VLRewardBench(ImageBaseDataset):
         nproc = judge_kwargs.pop('nproc', 4)
 
         if not osp.exists(storage):
-            raw_data = VLRewardBench('VL-RewardBench').data
+            # raw_data = VLRewardBench('VL-RewardBench').data
+            raw_data = VLRewardBench(dataset='VL-RewardBench', test_range=-1).data
             data = load(eval_file)
+            print("This is vl_rewardbench.py evaluate, length of data:", len(data),"length of raw_data:", len(raw_data))
             data['prediction'] = [str(x) for x in data['prediction']]
             data['human_ranking'] = [literal_eval(x) for x in raw_data['answer']]
 

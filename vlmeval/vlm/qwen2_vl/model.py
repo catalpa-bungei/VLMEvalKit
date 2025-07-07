@@ -268,11 +268,15 @@ class Qwen2VLChat(Qwen2VLPromptMixin, BaseModel):
                     'VLLM_WORKER_MULTIPROC_METHOD is not set to spawn.'
                     'Use \'export VLLM_WORKER_MULTIPROC_METHOD=spawn\' to avoid potential multi-process issues'
                 )
+            print("This is qwen2_vl/model.py, launching vLLM with limit_mm_per_prompt:", self.limit_mm_per_prompt)
             self.llm = LLM(
                 model=self.model_path,
                 max_num_seqs=5,
-                max_model_len=32768,
+                dtype='half',
+                # max_model_len=32768,
+                max_model_len=20000,  
                 limit_mm_per_prompt={"image": self.limit_mm_per_prompt},
+                # image=10,
                 tensor_parallel_size=tp_size,
                 gpu_memory_utilization=kwargs.get("gpu_utils", 0.9),
             )
@@ -282,8 +286,8 @@ class Qwen2VLChat(Qwen2VLPromptMixin, BaseModel):
             num_gpus = torch.cuda.device_count()
             self.model = pipeline(
                 model_path,
-                backend_config=TurbomindEngineConfig(session_len=32768, cache_max_entry_count=0.1, tp=num_gpus),
-                chat_template_config=ChatTemplateConfig(model_name='qwen2d5-vl'))
+                backend_config=TurbomindEngineConfig(session_len=32768, cache_max_entry_count=0.1, tp=num_gpus)
+            )
             torch.cuda.set_device(0)
             self.device = 'cuda'
         else:

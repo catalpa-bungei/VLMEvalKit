@@ -81,44 +81,16 @@ ungrouped = {
     "Falcon2-VLM-11B": partial(Falcon2VLM, model_path="tiiuae/falcon-11B-vlm"),
 }
 
-o1_key = os.environ.get('O1_API_KEY', None)
-o1_base = os.environ.get('O1_API_BASE', None)
+o1_key = 'XXX'  # noqa: E501
 o1_apis = {
     'o1': partial(
         GPT4V,
         model="o1-2024-12-17",
         key=o1_key,
-        api_base=o1_base, 
+        api_base='OFFICIAL', 
         temperature=0,
         img_detail='high',
-        retry=3,
-        timeout=1800, 
-        max_tokens=16384,
-        verbose=False,
-
-    ),
-    'o3': partial(
-        GPT4V, 
-        model="o3-2025-04-16",
-        key=o1_key,
-        api_base=o1_base, 
-        temperature=0,
-        img_detail='high',
-        retry=3,
-        timeout=1800, 
-        max_tokens=16384, 
-        verbose=False,
-    ),
-    'o4-mini': partial(
-        GPT4V, 
-        model="o4-mini-2025-04-16",
-        key=o1_key,
-        api_base=o1_base, 
-        temperature=0,
-        img_detail='high',
-        retry=3,
-        timeout=1800,
-        max_tokens=16384,
+        retry=10,
         verbose=False,
     ),
 }
@@ -274,11 +246,17 @@ api_models = {
     "GeminiFlashLite2-0": partial(
         Gemini, model="gemini-2.0-flash-lite", temperature=0, retry=10
     ),
+    "GeminiPro2-0": partial(
+        Gemini, model="gemini-2.0-pro-exp", temperature=0, retry=10
+    ),
     "GeminiFlash2-5": partial(
-        GPT4V, model="gemini-2.5-flash", temperature=0, retry=10, timeout=1800
+        GPT4V, model="gemini-2.5-flash-preview-04-17", temperature=0, retry=10
     ),
     "GeminiPro2-5": partial(
-        GPT4V, model="gemini-2.5-pro", temperature=0, retry=10, timeout=1800
+        GPT4V, model="gemini-2.5-pro-preview-03-25", temperature=0, retry=10
+    ),
+    "GeminiPro2-5-0506": partial(
+        GPT4V, model="gemini-2.5-pro-preview-05-06", temperature=0, retry=10
     ),
     
     # Qwen-VL
@@ -371,7 +349,6 @@ api_models = {
         temperature=0,
         retry=10,
         verbose=False,
-        timeout=1800
     ),
     "Claude4_Sonnet": partial(
         Claude3V,
@@ -379,7 +356,6 @@ api_models = {
         temperature=0,
         retry=10,
         verbose=False,
-        timeout=1800
     ),
     # GLM4V
     "GLM4V": partial(GLMVisionAPI, model="glm4v-biz-eval", temperature=0, retry=10),
@@ -1042,7 +1018,6 @@ ovis_series = {
     "Ovis2-8B": partial(Ovis2, model_path="AIDC-AI/Ovis2-8B"),
     "Ovis2-16B": partial(Ovis2, model_path="AIDC-AI/Ovis2-16B"),
     "Ovis2-34B": partial(Ovis2, model_path="AIDC-AI/Ovis2-34B"),
-    "Ovis-U1-3B": partial(OvisU1, model_path="AIDC-AI/Ovis-U1-3B"),
 }
 
 mantis_series = {
@@ -1226,7 +1201,6 @@ qwen2vl_series = {
         min_pixels=1280 * 28 * 28,
         max_pixels=16384 * 28 * 28,
         use_custom_prompt=False,
-        use_lmdeploy=True
     ),
     "MiMo-VL-7B-RL": partial(
         Qwen2VLChat,
@@ -1234,7 +1208,6 @@ qwen2vl_series = {
         min_pixels=1280 * 28 * 28,
         max_pixels=16384 * 28 * 28,
         use_custom_prompt=False,
-        use_lmdeploy=True
     ),
     "Qwen2.5-VL-72B-Instruct-ForVideo": partial(
         Qwen2VLChat,
@@ -1438,8 +1411,7 @@ aguvis_series = {
 
 kimi_series = {
     'Kimi-VL-A3B-Thinking': partial(KimiVL, model_path='moonshotai/Kimi-VL-A3B-Thinking'),
-    'Kimi-VL-A3B-Instruct': partial(KimiVL, model_path='moonshotai/Kimi-VL-A3B-Instruct'),
-    'Kimi-VL-A3B-Thinking-2506': partial(KimiVL, model_path='moonshotai/Kimi-VL-A3B-Thinking-2506', temperature=0.8, max_tokens=32768, extract_summary=True)
+    'Kimi-VL-A3B-Instruct': partial(KimiVL, model_path='moonshotai/Kimi-VL-A3B-Instruct')
 }
 
 flash_vl = {

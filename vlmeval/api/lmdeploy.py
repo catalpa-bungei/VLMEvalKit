@@ -174,7 +174,7 @@ class LMDeployWrapper(BaseAPI):
                  retry: int = 5,
                  wait: int = 5,
                  key: str = 'sk-123456',
-                 verbose: bool = True,
+                 verbose: bool = False,
                  temperature: float = 0.0,
                  timeout: int = 60,
                  api_base: str = None,
@@ -194,7 +194,10 @@ class LMDeployWrapper(BaseAPI):
         super().__init__(wait=wait, retry=retry, system_prompt=system_prompt, verbose=verbose, **kwargs)
 
         model_url = ''.join([api_base.split('v1')[0], 'v1/models'])
+        # model_url = ''.join([api_base.split('v1')[0], 'v1/chat/completions'])
         resp = requests.get(model_url)
+        # resp = requests.post(model_url)
+        print("This is lmdeploy.py, resp.json: ", resp.json())
         model_id_list = [str(data['id']) for data in resp.json()['data']]
         self.model = model if model in model_id_list else model_id_list[0]
         self.logger.info(f'lmdeploy evaluate model: {self.model}')
@@ -287,6 +290,7 @@ class LMDeployWrapper(BaseAPI):
 
     def generate_inner(self, inputs, **kwargs) -> str:
         input_msgs = self.prepare_inputs(inputs)
+        print("This is lmdeploy.py generate_inner, input_msgs: ", input_msgs[0]["content"][0])
 
         temperature = kwargs.pop('temperature', self.temperature)
         self.logger.info(f'Generate temperature: {temperature}')
@@ -300,8 +304,10 @@ class LMDeployWrapper(BaseAPI):
             n=1,
             temperature=temperature,
             **kwargs)
+        api_base = self.api_base + '/chat/completions' if self.api_base.endswith('v1') else self.api_base + '/v1/chat/completions'
         response = requests.post(
-            self.api_base,
+            # self.api_base,
+            api_base,
             headers=headers, data=json.dumps(payload), timeout=self.timeout * 1.1)
         ret_code = response.status_code
         ret_code = 0 if (200 <= int(ret_code) < 300) else ret_code
@@ -309,6 +315,7 @@ class LMDeployWrapper(BaseAPI):
         try:
             resp_struct = json.loads(response.text)
             answer = resp_struct['choices'][0]['message']['content'].strip()
+            # print("This is lmdeploy.py generate_inner, answer: ", answer)
 
             # for internvl2-8b-mpo-cot
             if getattr(self, 'use_mpo_prompt', False):

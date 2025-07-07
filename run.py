@@ -84,6 +84,7 @@ def build_dataset_from_config(cfg, dataset_name):
     if hasattr(vlmeval.dataset, cls_name):
         cls = getattr(vlmeval.dataset, cls_name)
         sig = inspect.signature(cls.__init__)
+        print("This is run.py, sig.parameters:", sig.parameters)
         valid_params = {k: v for k, v in config.items() if k in sig.parameters}
         if cls.MODALITY == 'VIDEO':
             if valid_params.get('fps', 0) > 0 and valid_params.get('nframe', 0) > 0:
@@ -191,7 +192,7 @@ You can launch the evaluation by setting either --data and --model or --config.
     # Reuse: will reuse the existing prediction files
     parser.add_argument('--reuse', action='store_true')
     # Reuse-aux: if set, when reuse is True, will also reuse the auxiliary evaluation files
-    parser.add_argument('--reuse-aux', type=int, default=True, help='reuse auxiliary evaluation files')
+    parser.add_argument('--reuse-aux', type=bool, default=True, help='reuse auxiliary evaluation files')
     parser.add_argument(
         '--use-vllm', action='store_true', help='use vllm to generate, the flag is only supported in Llama4 for now')
 
@@ -248,8 +249,10 @@ def main():
 
     for _, model_name in enumerate(args.model):
         model = None
-        date, commit_id = timestr('day'), githash(digits=8)
-        eval_id = f"T{date}_G{commit_id}"
+        # date, commit_id = timestr('day'), githash(digits=8)
+        # eval_id = f"T{date}_G{commit_id}"
+        time_minute, commit_id = timestr('minute'), githash(digits=8)
+        eval_id = f"T{time_minute}_G{commit_id}"
 
         pred_root = osp.join(args.work_dir, model_name, eval_id)
         pred_root_meta = osp.join(args.work_dir, model_name)
@@ -264,7 +267,6 @@ def main():
 
         if use_config:
             model = build_model_from_config(cfg['model'], model_name, args.use_vllm)
-        print(args.reuse_aux)
 
         for _, dataset_name in enumerate(args.data):
             if WORLD_SIZE > 1:
@@ -409,14 +411,15 @@ def main():
                     elif listinstr(['VGRPBench'], dataset_name):
                         judge_kwargs['model'] = 'gpt-4o'
                     elif listinstr(['MathVista', 'MathVerse', 'MathVision', 'DynaMath', 'VL-RewardBench', 'LogicVista', 'MOAT', 'OCR_Reasoning'], dataset_name):  # noqa: E501
-                        judge_kwargs['model'] = 'gpt-4o-mini'
+                        # judge_kwargs['model'] = 'gpt-4o-mini'
+                        judge_kwargs['model'] = 'qwen-72b'
                     elif listinstr(['MMLongBench', 'MMDU', 'DUDE', 'SLIDEVQA', 'MIA-Bench', 'WildVision', 'MMAlignBench', 'MM-IFEval'], dataset_name):  # noqa: E501
                         judge_kwargs['model'] = 'gpt-4o'
                     elif listinstr(['ChartMimic'], dataset_name):
                         judge_kwargs['model'] = 'gpt-4o'
                     elif listinstr(['VDC'], dataset_name):
                         judge_kwargs['model'] = 'llama31-8b'
-                    elif listinstr(['Video_MMLU_QA', 'Video_MMLU_CAP'], dataset_name):
+                    elif listinstr(['VideoMMLU_QA', 'VideoMMLU_CAP'], dataset_name):
                         judge_kwargs['model'] = 'qwen-72b'
                     elif listinstr(['MMVMBench'], dataset_name):
                         judge_kwargs['model'] = 'gpt-4o'
@@ -473,6 +476,7 @@ def main():
                         proxy_set(eval_proxy)
 
                     # Perform the Evaluation
+                    print(f'Evaluating {model_name} on {dataset_name}, result file: {result_file}', "length of dataset:", len(dataset))
                     eval_results = dataset.evaluate(result_file, **judge_kwargs)
                     # Display Evaluation Results in Terminal
                     if eval_results is not None:

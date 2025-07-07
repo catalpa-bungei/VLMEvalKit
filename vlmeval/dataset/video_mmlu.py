@@ -41,7 +41,7 @@ detailed_caption_prompts = [
 ]
 
 
-class Video_MMLU_CAP(VideoBaseDataset):
+class VideoMMLU_CAP(VideoBaseDataset):
 
     MD5 = ''
 
@@ -73,7 +73,7 @@ class Video_MMLU_CAP(VideoBaseDataset):
 
     @classmethod
     def supported_datasets(cls):
-        return ['Video_MMLU_CAP']
+        return ['VideoMMLU_CAP']
 
     def prepare_dataset(self, dataset_name='Video_MMLU_CAP', repo_id='Enxin/Video-MMLU'):
         def check_integrity(pth):
@@ -234,8 +234,8 @@ class Video_MMLU_CAP(VideoBaseDataset):
                 for l in lines:
                     l = l.strip()
                     if ': ' in l:
-                        key = Video_MMLU_CAP.remove_side_quote(l.split(': ')[0].strip())
-                        val = Video_MMLU_CAP.remove_side_quote(l.split(': ')[1].strip())
+                        key = VideoMMLU_CAP.remove_side_quote(l.split(': ')[0].strip())
+                        val = VideoMMLU_CAP.remove_side_quote(l.split(': ')[1].strip())
                         if len(key) and len(val):
                             res[key] = val
                 return res
@@ -355,7 +355,7 @@ class Video_MMLU_CAP(VideoBaseDataset):
         return rating
 
 
-class Video_MMLU_QA(VideoBaseDataset):
+class VideoMMLU_QA(VideoBaseDataset):
 
     MD5 = ''
 
@@ -387,7 +387,7 @@ class Video_MMLU_QA(VideoBaseDataset):
 
     @classmethod
     def supported_datasets(cls):
-        return ['Video_MMLU_QA']
+        return ['VideoMMLU_QA']
 
     def prepare_dataset(self, dataset_name='Video_MMLU_QA', repo_id='Enxin/Video-MMLU'):
         def check_integrity(pth):
@@ -522,8 +522,8 @@ class Video_MMLU_QA(VideoBaseDataset):
                 for l in lines:
                     l = l.strip()
                     if ': ' in l:
-                        key = Video_MMLU_QA.remove_side_quote(l.split(': ')[0].strip())
-                        val = Video_MMLU_QA.remove_side_quote(l.split(': ')[1].strip())
+                        key = VideoMMLU_QA.remove_side_quote(l.split(': ')[0].strip())
+                        val = VideoMMLU_QA.remove_side_quote(l.split(': ')[1].strip())
                         if len(key) and len(val):
                             res[key] = val
                 return res

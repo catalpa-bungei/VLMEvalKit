@@ -6,7 +6,7 @@ from .image_yorn import ImageYORNDataset
 from .image_mcq import (
     ImageMCQDataset, MMMUDataset, CustomMCQDataset, MUIRDataset, GMAIMMBenchDataset, MMERealWorld, HRBenchDataset,
     NaturalBenchDataset, WeMath, MMMUProDataset, VMCBenchDataset, MedXpertQA_MM_test, LEGO, VisuLogic, CVBench, TDBench,
-    MicroBench, OmniMedVQA, MSEarthMCQ, VLMBlind, SCAM, _3DSRBench, AffordanceDataset, OmniEarthMCQBench, XLRSBench
+    MicroBench, OmniMedVQA, MSEarthMCQ, VLMBlind, SCAM, _3DSRBench, AffordanceDataset
 )
 from .image_mt import MMDUDataset
 from .image_vqa import (
@@ -41,17 +41,12 @@ from .longvideobench import LongVideoBench
 from .video_concat_dataset import ConcatVideoDataset
 from .mmgenbench import MMGenBench
 from .cgbench import CGBench_MCQ_Grounding_Mini, CGBench_OpenEnded_Mini, CGBench_MCQ_Grounding, CGBench_OpenEnded
-from .CGAVCounting.cg_av_counting import CGAVCounting
-
 from .megabench import MEGABench
 from .moviechat1k import MovieChat1k
-from .video_mmlu import Video_MMLU_CAP, Video_MMLU_QA
+from .video_mmlu import VideoMMLU_CAP, VideoMMLU_QA
 from .vdc import VDC
-from .vcrbench import VCRBench
 from .gobench import GOBenchDataset
-from .sfebench import SFE
-from .visfactor import VisFactor
-from .ost_bench import OSTDataset
+
 
 from .worldsense import WorldSense
 from .qbench_video import QBench_Video, QBench_Video_MCQ, QBench_Video_VQA
@@ -197,8 +192,7 @@ IMAGE_DATASET = [
     PathVQA_TEST, TDBench, TDBenchGrounding, MicroBench, CharXiv, OmniMedVQA,
     WildDocBenchmark, MSEarthMCQ, OCR_Reasoning, PhyX, VLMBlind, CountBenchQA,
     ZEROBench, SCAM, Omni3DBench, TallyQA, _3DSRBench, AffordanceDataset,
-    MMEReasoning, GOBenchDataset, SFE, ChartMimic, MMVMBench, XLRSBench,
-    OmniEarthMCQBench, VisFactor, OSTDataset
+    MMEReasoning, GOBenchDataset, ChartMimic, MMVMBench,
 ]
 
 
@@ -209,8 +203,8 @@ VIDEO_DATASET = [
     TempCompass, TempCompass_MCQ, TempCompass_Captioning, TempCompass_YorN,
     CGBench_MCQ_Grounding_Mini, CGBench_OpenEnded_Mini, CGBench_MCQ_Grounding, CGBench_OpenEnded,
     QBench_Video, QBench_Video_MCQ, QBench_Video_VQA,
-    Video_MMLU_CAP, Video_MMLU_QA,
-    Video_Holmes, VCRBench, CGAVCounting
+    VideoMMLU_CAP, VideoMMLU_QA,
+    Video_Holmes
 ]
 
 TEXT_DATASET = [
@@ -283,6 +277,7 @@ def build_dataset(dataset_name, **kwargs):
         warnings.warn(f'Data file {data_file} does not exist. Dataset building failed. ')
         return None
 
+    print(f'Will try to build dataset {dataset_name} from {data_file}. ')
     data = load(data_file)
     if 'question' not in [x.lower() for x in data.columns]:
         warnings.warn(f'Data file {data_file} does not have a `question` column. Dataset building failed. ')
