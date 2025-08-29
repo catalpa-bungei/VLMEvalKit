@@ -10,9 +10,9 @@
         }
     },
     "data": {
-        "MMMU_TEST": {
+        "MMMU_DEV_VAL": {
             "class": "MMMUDataset",
-            "dataset": "MMMU_TEST",
+            "dataset": "MMMU_DEV_VAL",
             "test_range": 0
         },
         "VL-RewardBench": {

@@ -2,16 +2,33 @@
     "model": {
         "Qwen2.5-VL-7B-Instruct": {
             "class": "LMDeployAPI",
-            "model": "Qwen2.5-VL-7B-Instruct",
+            "model": "qwen2_5_vl_7b_promptv8_T5_temp0.7-text-proportion-beta0.1_alpha0.5",
             "api_base": "http://localhost:8007/v1",
-            "temperature": 0.7
+            "temperature": 0.7,
+            "max_tokens": 8192
         }
     },
     "data": {
-        "MMMU_TEST": {
+        "MMMU_DEV_VAL": {
             "class": "MMMUDataset",
-            "dataset": "MMMU_TEST",
-            "test_range": 5
+            "dataset": "MMMU_DEV_VAL",
+            "test_range": -1
+        },
+        "MathVision": {
+            "class": "MathVision",
+            "dataset": "MathVision",
+            "test_range": -1
+        },
+        "MathVista": {
+            "class": "MathVista",
+            "dataset" : "MathVista_MINI",
+            "test_range" : -1
+        },
+        "OlympiadBench": {
+            "class": "OlympiadBench",
+            "dataset": "OlympiadBench",
+            "test_range": -1
         }
-    }
+    },
+    "mode": "infer"
 }

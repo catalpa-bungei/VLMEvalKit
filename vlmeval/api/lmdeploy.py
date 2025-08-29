@@ -157,16 +157,36 @@ class CogVLM2_PromptUtil:
         message.extend([dict(type='image', value=p) for p in tgt_path])
         return message
 
+class Confidence_PromptUtil: # unused
+
+    def dump_image(self, line, dataset):
+        return self.dump_image_func(line)
+    
+    def use_custom_prompt(self, dataset):
+        return True
+    
+    def build_prompt(self, line, dataset=None):
+        assert dataset is None or isinstance(dataset, str)
+        assert self.use_custom_prompt(dataset)
+        question = line['question']
+        tgt_path = self.dump_image(line, dataset)
+        confidence_prompt = "Based on your answer, please attach a confidence signal ranging from 1-10 to specify whether you are certain about your answer. 1 means you are totally uncertain (strong inconfidence), while 10 means you are totally certain (strong confidence). If you need more information to answer the question, please attach 1. We will compare your answer with the ground truth to check the correctness. If your answer is correct and accompanied by strong confidence, you will be rewarded; if your answer is incorrect but assigned strong confidence, you will be punished. The signal should be in the format of <CONFIDENCE:NUMBER>, where NUMBER ranges from 1 to 10, directly appended to your answer."
+        prompt = question + '\n' + confidence_prompt
+        message = [dict(type='text', value=prompt)]
+        message.extend([dict(type='image', value=p) for p in tgt_path])
+        return message
 
 class LMDeployWrapper(BaseAPI):
 
     is_api: bool = True
 
     custom_prompt: str = None
+    custom_prompt = None  # 'cogvlm2', 'internvl2', 'internvl2-mpo-cot', 'confidence'
     prompt_map = {
         'cogvlm2': CogVLM2_PromptUtil(),
         'internvl2': InternVL2_PromptUtil(),
         'internvl2-mpo-cot': InternVL2_PromptUtil(use_mpo_prompt=True),
+        'confidence': Confidence_PromptUtil(),
     }
 
     def __init__(self,
@@ -218,6 +238,7 @@ class LMDeployWrapper(BaseAPI):
         return False
 
     def build_prompt(self, line, dataset=None):
+        print("This is lmdeploy.py LMDeployWrapper build_prompt, self.custom_prompt is: ", self.custom_prompt,"\n")
         if self.custom_prompt in self.prompt_map:
             return self.prompt_map[self.custom_prompt].build_prompt(line, dataset)
         raise NotImplementedError
@@ -290,7 +311,9 @@ class LMDeployWrapper(BaseAPI):
 
     def generate_inner(self, inputs, **kwargs) -> str:
         input_msgs = self.prepare_inputs(inputs)
-        print("This is lmdeploy.py generate_inner, input_msgs: ", input_msgs[0]["content"][0])
+
+        print("This is lmdeploy.py generate_inner, input_msgs: ", input_msgs[0]["content"][-1])
+        # input_msgs[0]["content"] is structured as questions + image + options and confidence prompt
 
         temperature = kwargs.pop('temperature', self.temperature)
         self.logger.info(f'Generate temperature: {temperature}')
