@@ -1,5 +1,10 @@
 .idea/
 
+outputs/
+data/
+*/outputs/
+*/data/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -164,9 +169,9 @@ scripts/*ttf
 cache_dir/*
 
 # Evaluation Outputs
-outputs/*
+outputs/
 demo.ipynb
-*json
+# *json
 !vlmeval/dataset/utils/vgrpbench/configs/formating-prompt/**/*.json
 .vscode
 *.swp
